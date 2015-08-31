@@ -1,4 +1,4 @@
-
+#author Ryan Inghilterra
 
 dogStarDay <- function(date, month) {
     
