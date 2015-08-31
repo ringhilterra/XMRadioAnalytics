@@ -1,7 +1,7 @@
 #author Ryan Inghilterra
 
-dogStarDay <- function(date, month) {
-    
+dogStarDay <- function(month, date) {
+
     library(XML)
     library(xlsx)
     library(dplyr)
@@ -21,6 +21,13 @@ dogStarDay <- function(date, month) {
     totMatchPattern <- regexpr("[[:digit:]]+", totMatchesStr)
     totMatchesStr <- regmatches(totMatchesStr, totMatchPattern)
     totalMatches <- as.numeric(totMatchesStr) #parses out total matches
+
+    if(length(totalMatches) == 0) {
+        fullDay.table <- data.frame(data.frame("EMPTY","DATE",month," / ",date))
+        names(fullDay.table) <- c("Channel", "Artist", "Title", "Date", "Time")
+        return(fullDay.table)
+    }
+
     url <- paste("http://www.dogstarradio.com/search_playlist.php?artist=&title=&channel=51&month=1&date=1&shour=&sampm=&stz=&ehour=&eampm=&resultcount=", totMatchesStr, sep="")
     url <- gsub("date=[0123][0123456789]*", date, url)
     url <- gsub("month=[123456789][012]*", month, url)
@@ -52,15 +59,17 @@ dogStarDay <- function(date, month) {
 }
 
 dogStarMonth <- function(month) {
-    
-    month.table <- dogStarDay(1, month)
+
+    month.table <- dogStarDay(month,1)
     i <- 2
-    while(i <= 24 ) {
-        day.table <- dogStarDay(i,month)
+    while(i <= 29 ) {
+        day.table <- dogStarDay(month,i)
         #print(i)
         month.table <- rbind(month.table, day.table)
         i = i + 1
     }
-    
+
+    write.xlsx(month.table, "dogstar.xlsx")
+
     return(month.table)
 }
