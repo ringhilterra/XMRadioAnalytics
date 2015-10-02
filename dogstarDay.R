@@ -59,10 +59,17 @@ dogStarDay <- function(month, date) {
 }
 
 dogStarMonth <- function(month) {
+    daysInMonth <- 31
+    if(month == 2) {
+        daysInMonth <- 28
+    }
+    if(month == 4 | month == 6 | month == 9 | month == 11 ) {
+        daysInMonth <- 30
+    }
 
     month.table <- dogStarDay(month,1)
     i <- 2
-    while(i <= 29 ) {
+    while(i <= daysInMonth ) {
         day.table <- dogStarDay(month,i)
         #print(i)
         month.table <- rbind(month.table, day.table)
