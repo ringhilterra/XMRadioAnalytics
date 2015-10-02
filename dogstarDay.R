@@ -50,6 +50,7 @@ dogStarDay <- function(month, date) {
     fullDay.table <- fullDay.table[!sxmElectroLogical,]
     sxmElectroLogical <- grepl("sxmElectro", fullDay.table$Artist)
     fullDay.table <- fullDay.table[!sxmElectroLogical,]
+    fullDay.table <- removeDuplicateRows(fullDay.table)
     row.names(fullDay.table)<-NULL
 
     #write.xlsx(fullDay.table, "dogstar.xlsx")
@@ -79,4 +80,20 @@ dogStarMonth <- function(month) {
     write.xlsx(month.table, "dogstar.xlsx")
 
     return(month.table)
+}
+
+
+removeDuplicateRows <- function(table) {
+    rowsToRemove <- vector('numeric')
+    rowNumber <- 1
+    while(rowNumber < nrow(table) - 1) {
+        if(table[rowNumber, 'Title'] == table[rowNumber+1, 'Title']) {
+            #print(rowNumber)
+            rowsToRemove <- append(rowsToRemove, rowNumber)
+        }
+
+        rowNumber = rowNumber + 1
+    }
+    #print(rowsToRemove)
+    finalTable <- table[-rowsToRemove,]
 }
