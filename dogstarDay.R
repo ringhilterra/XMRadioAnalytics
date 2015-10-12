@@ -21,7 +21,6 @@ dogStarDay <- function(month, date) {
     totMatchPattern <- regexpr("[[:digit:]]+", totMatchesStr)
     totMatchesStr <- regmatches(totMatchesStr, totMatchPattern)
     totalMatches <- as.numeric(totMatchesStr) #parses out total matches
-
     if(length(totalMatches) == 0) {
         fullDay.table <- data.frame(data.frame("EMPTY","DATE",month," / ",date))
         names(fullDay.table) <- c("Channel", "Artist", "Title", "Date", "Time")
@@ -35,6 +34,7 @@ dogStarDay <- function(month, date) {
     pageCount <- 1
     while(nrow(fullDay.table) < totalMatches) {
         url <- paste(url2, pageCount, sep="")
+        #print(url)
         dogstar.table <- readHTMLTable(url, header=T, which=2, skip.rows=2)
         fullDay.table <- rbind(fullDay.table, dogstar.table)
         fullDay.table <- fullDay.table[complete.cases(fullDay.table),] #rid of na's
@@ -72,7 +72,6 @@ dogStarMonth <- function(month) {
     i <- 2
     while(i <= daysInMonth ) {
         day.table <- dogStarDay(month,i)
-        #print(i)
         month.table <- rbind(month.table, day.table)
         i = i + 1
     }
@@ -88,12 +87,16 @@ removeDuplicateRows <- function(table) {
     rowNumber <- 1
     while(rowNumber < nrow(table) - 1) {
         if(table[rowNumber, 'Title'] == table[rowNumber+1, 'Title']) {
-            #print(rowNumber)
             rowsToRemove <- append(rowsToRemove, rowNumber)
         }
 
         rowNumber = rowNumber + 1
     }
-    #print(rowsToRemove)
-    finalTable <- table[-rowsToRemove,]
+    if(length(rowsToRemove) != 0) {
+        finalTable <- table[-rowsToRemove,]
+    }
+    else {
+        finalTable <- table
+    }
+    return(finalTable)
 }
